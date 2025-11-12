@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0"
+  />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Nicholas Garos - Under Construction</title>
+
+  <!-- retro pixel font (matches your original) -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- optional utility sheet (safe to leave empty) -->
+  <link rel="stylesheet" href="../../styles/utilities.css" />
+  <link rel="stylesheet" href="./home.css" />
+  <style>
+    /* critical: fade overlay default state (black) */
+    #fadeOverlay {
+      position: fixed; inset: 0;
+      background: #000;
+      opacity: 1;
+      z-index: 10000;
+      pointer-events: none;
+      transition: opacity 800ms ease-out;
+    }
+    #fadeOverlay.fade-out { opacity: 0; }
+  </style>
+</head>
+<body>
+  <!-- Fade overlay (handled by effects/fade.js) -->
+  <div id="fadeOverlay"></div>
+
+  <!-- Ambient audio element that ambient.js controls -->
+  <audio id="ambientMusic" loop preload="auto"></audio>
+
+  <!-- Page content (kept compact but styled to match your look) -->
+  <div class="content">
+    <div class="construction-warning">⚠️ UNDER CONSTRUCTION ⚠️</div>
+    <h1>NICHOLAS GAROS</h1>
+    <div class="message">
+      Meanwhile, let's see how good<br />you are at debugging...
+    </div>
+    <div class="arrow">▼</div>
+
+    <a href="../../../game/game.html" class="game-button js-game-link">
+      <div class="button-zone">ZONE</div>
+      <div class="button-invaders">INVADERS</div>
+    </a>
+
+    <div class="linktree-container">
+      <a href="../social/social-index.html" class="linktree-link js-social-link">
+        <div class="linktree-icon">🌐</div>
+        <div class="linktree-text">CONNECT</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- starry bg + scattered “errors” like your original (pure cosmetic) -->
+  <div class="code-bg" id="codeBg"></div>
+  <script>
+    (function makeStarsAndErrors(){
+      const codeSymbols = ['(', ')', '{', '}', '[', ']', '<', '>', '/', '\\', '|', ';', ':', '.', ',', '=', '+', '-', '*', '&', '%', '$', '#', '@', '!', '?', '"', "'", '`'];
+      for (let i = 0; i < 90; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.textContent = codeSymbols[Math.floor(Math.random() * codeSymbols.length)];
+        star.style.fontSize = (Math.random() * 10 + 8) + 'px';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 3 + 's';
+        document.body.appendChild(star);
+      }
+      const errTexts = [
+        "SyntaxError: Unexpected token '{'",
+        "TypeError: Cannot read property 'length'",
+        "ReferenceError: foo is not defined",
+        "Error: Missing closing bracket ']'",
+        "Warning: Deprecated function call",
+        "Error: Maximum call stack size exceeded",
+      ];
+      errTexts.forEach((t,i)=>{
+        const d=document.createElement('div');
+        d.className='error-line';
+        d.textContent=t;
+        d.style.top = (10 + i*12) + '%';
+        d.style.left = (i%2?70:10) + '%';
+        document.body.appendChild(d);
+      });
+    })();
+  </script>
+
+  <!-- Home boot -->
+  <script type="module" src="./home.js"></script>
+</body>
+</html>
