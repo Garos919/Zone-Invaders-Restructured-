@@ -1,4 +1,0 @@
-/* tiny reset and touch affordances */
-*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; }
-html,body{ margin:0; padding:0; }
-a{ color:inherit; }
