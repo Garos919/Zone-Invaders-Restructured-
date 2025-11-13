@@ -1,0 +1,18 @@
+/* utilities.css (kept minimal — will not override your existing one) */
+:root {
+  --bg: #0b0d10;
+  --fg: #e5f2ff;
+  --muted: #8aa3b8;
+  --accent: #00e5ff;
+  --accent-2: #ff2e63;
+  --glow: 0 0 12px rgba(0,229,255,.6), 0 0 28px rgba(0,229,255,.35);
+  --danger: #ff3b3b;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+.hidden { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+.center { display: grid; place-items: center; }
+.full-bleed { position: fixed; inset: 0; }
+.layer { position: absolute; inset: 0; }

@@ -1,0 +1,78 @@
+/* A.R.I. styles */
+#ari {
+  position: fixed;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  color: #AEEFFF;
+  text-shadow: 0 0 15px currentColor;
+  z-index: 100;
+  pointer-events: none;
+  transition: left 0.3s ease-out, top 0.3s ease-out;
+  white-space: nowrap;
+}
+#ari-bubble {
+  position: fixed;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #AEEFFF;
+  text-shadow: 0 0 10px currentColor;
+  z-index: 99;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid currentColor;
+  padding: 10px 14px;
+  border-radius: 6px;
+  pointer-events: none;
+  max-width: 80vw;
+  line-height: 1.8;
+}
+
+/* Coderfly styles */
+#coderfly {
+  position: fixed;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  color: #FFD700;
+  text-shadow: 0 0 10px currentColor;
+  z-index: 98;
+  pointer-events: auto;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.1s ease;
+}
+#coderfly:hover { transform: scale(1.05); }
+
+/* Score Board */
+#scoreBoard {
+  position: fixed;
+  top: 20px; right: 20px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #0ff;
+  padding: 15px;
+  z-index: 200;
+  line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+  #scoreBoard { top: 10px; right: 10px; font-size: 9px; padding: 10px; }
+}
+@media (max-width: 480px) {
+  #scoreBoard { font-size: 8px; padding: 8px; line-height: 1.6; }
+}
+
+/* Hide bubble by default; only show when JS adds .show */
+#ari-bubble {
+  display: none;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity .18s ease-out, transform .18s ease-out;
+}
+
+#ari-bubble.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0"
+  />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Nicholas Garos - Under Construction</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+
+  <!-- Page CSS -->
+  <link rel="stylesheet" href="./home.css" />
+  <link rel="stylesheet" href="../../modules/entities/ari/ari.css" />
+</head>
+<body>
+  <!-- Ambient background music -->
+  <audio id="ambientMusic" loop preload="auto">
+    <source src="../../../game/audio/under-construction.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- Hover sound -->
+  <audio id="hoverSound" preload="auto">
+    <source src="../../../game/audio/hover2.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- Mass explosion sound -->
+  <audio id="massExplosionSound" preload="auto">
+    <source src="../../../game/audio/mass--explosion.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- A.R.I. state transition sound -->
+  <audio id="ariTransitionSound" preload="auto">
+    <source src="../../../game/audio/entities/ari_state_transition.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- Fade overlay for transitions -->
+  <div id="fadeOverlay"></div>
+
+  <!-- A.R.I. character -->
+  <div id="ari">&lt;(o-o)&gt;</div>
+  <div id="ari-bubble"></div>
+
+  <!-- Coderfly -->
+  <div id="coderfly" style="display: none;">⸌(•)⸍</div>
+
+  <!-- Score Board -->
+  <div id="scoreBoard" style="display: none;">
+    <div><span id="scoreBoardFly">⸌(•)⸍</span> C0D3RFLY HUNT <span id="scoreBoardFly2">⸌(•)⸍</span></div>
+    <div style="margin-top: 10px;">Y0U: <span id="userScore">0</span></div>
+    <div>@.R.1.: <span id="ariScore">0</span></div>
+  </div>
+
+  <!-- Content (background layers are injected by background.js) -->
+  <div class="content">
+    <div class="construction-warning">⚠️ UNDER CONSTRUCTION ⚠️</div>
+    <h1>NICHOLAS GAROS</h1>
+    <div class="message">
+      Meanwhile, let's see how good<br />
+      you are at debugging...
+    </div>
+    <div class="arrow">▼</div>
+
+    <!-- Main game button -->
+    <a href="../../../game/game.html" class="game-button" id="gameButton">
+      <div class="button-zone">ZONE</div>
+      <div class="button-invaders">INVADERS</div>
+    </a>
+
+    <!-- Social Links -->
+    <div class="linktree-container">
+      <a href="../social/social-index.html" class="linktree-link" id="linktreeButton">
+        <div class="linktree-icon">🌐</div>
+        <div class="linktree-text">CONNECT</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../modules/entities/ari/ari.js"></script>
+
+  <!-- Effects -->
+  <script src="../../modules/effects/particles.js"></script>
+  <script src="../../modules/effects/fade.js"></script>
+  <script src="../../modules/effects/background.js"></script>
+
+  <!-- Audio + UI -->
+  <script src="../../modules/audio/ambient.js"></script>
+  <script src="../../modules/ui/home-ui.js"></script>
+
+  <!-- Page bootstrap -->
+  <script src="./home.js"></script>
+</body>
+</html>

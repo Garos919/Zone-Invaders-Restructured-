@@ -1,0 +1,300 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+body {
+  font-family: 'Courier New', monospace;
+  background: #000;
+  color: #0f0;
+  overflow: hidden;
+  position: relative;
+  height: 100vh;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Code background */
+.code-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 11px;
+  line-height: 14px;
+  opacity: 0.15;
+  white-space: pre;
+  overflow: hidden;
+  z-index: 1;
+  color: #0f0;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 20px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .content { padding: 15px; }
+}
+
+.construction-warning {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: #ff0;
+  text-shadow: 0 0 10px #ff0;
+  margin-bottom: 20px;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 49%, 100% { opacity: 1; }
+  50%, 99% { opacity: 0.3; }
+}
+
+h1 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 24px;
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff;
+  margin-bottom: 40px;
+  letter-spacing: 2px;
+}
+
+@media (max-width: 768px) {
+  h1 { font-size: 18px; margin-bottom: 25px; letter-spacing: 1px; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 14px; margin-bottom: 20px; }
+}
+
+.message {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #fff;
+  margin-bottom: 20px;
+  max-width: 500px;
+  line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+  .message { font-size: 9px; max-width: 90%; margin-bottom: 15px; }
+}
+
+@media (max-width: 480px) {
+  .message { font-size: 8px; line-height: 1.6; }
+}
+
+.arrow {
+  font-size: 30px;
+  color: #0ff;
+  margin-bottom: 30px;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+
+/* Logo-style button */
+.game-button {
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1000;
+  touch-action: manipulation;
+}
+
+.game-button:hover { transform: scale(1.05); }
+
+.button-zone {
+  font-family: 'Press Start 2P', monospace;
+  color: #0ff;
+  font-size: 38px;
+  letter-spacing: 6px;
+  transform: perspective(400px) scaleX(1.2) rotateX(25deg);
+  text-shadow: 0 0 8px #0ff, 0 0 20px #0ff;
+  margin-bottom: 10px;
+}
+
+.button-invaders {
+  font-family: 'Press Start 2P', monospace;
+  color: #f33;
+  font-size: 44px;
+  letter-spacing: 4px;
+  transform: perspective(400px) scaleX(1.4) rotateX(35deg);
+  text-shadow: 0 0 8px #f33, 0 0 20px #f33;
+}
+
+@media (max-width: 768px) {
+  .button-zone { font-size: 28px; letter-spacing: 4px; }
+  .button-invaders { font-size: 32px; letter-spacing: 3px; }
+}
+
+@media (max-width: 480px) {
+  .button-zone { font-size: 20px; letter-spacing: 2px; }
+  .button-invaders { font-size: 24px; letter-spacing: 2px; }
+}
+
+.game-button:hover .button-zone {
+  text-shadow: 0 0 15px #0ff, 0 0 30px #0ff, 0 0 50px #0ff;
+}
+.game-button:hover .button-invaders {
+  text-shadow: 0 0 15px #f33, 0 0 30px #f33, 0 0 50px #f33;
+}
+
+/* Errors scattered around */
+.error-line {
+  position: absolute;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #f33;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .error-line { font-size: 10px; opacity: 0.4; }
+}
+
+@media (max-width: 480px) {
+  .error-line { font-size: 8px; opacity: 0.3; }
+}
+
+/* Coding symbols (stars) */
+.star {
+  position: absolute;
+  font-family: 'Courier New', monospace;
+  color: #fff;
+  opacity: 0.8;
+  pointer-events: none;
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.9; }
+}
+
+/* Flash effect */
+.flash {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  width: 0;
+  height: 0;
+}
+.flash svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 20px #fff) drop-shadow(0 0 40px #fff);
+}
+
+@keyframes starBurst {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.1);
+    filter: drop-shadow(0 0 20px #fff) drop-shadow(0 0 40px #fff);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    filter: drop-shadow(0 0 60px #fff) drop-shadow(0 0 120px #fff) drop-shadow(0 0 200px #fff);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.2);
+    filter: drop-shadow(0 0 40px #fff) drop-shadow(0 0 80px #fff);
+  }
+}
+
+/* Fade overlay for page transition */
+#fadeOverlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #000;
+  opacity: 1;
+  z-index: 10000;
+  pointer-events: none;
+  transition: opacity 800ms ease-out;
+}
+#fadeOverlay.fade-out { opacity: 0; }
+#fadeOverlay.active {
+  opacity: 1;
+  transition: opacity 500ms ease-in-out;
+}
+
+/* Linktree Link Styles */
+.linktree-container { margin-top: 40px; }
+.linktree-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  padding: 12px 20px;
+  background: linear-gradient(45deg, #111, #222);
+  border: 2px solid #0ff;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.linktree-link::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+.linktree-link:hover::before { left: 100%; }
+.linktree-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+  border-color: #fff;
+}
+.linktree-icon { font-size: 20px; filter: drop-shadow(0 0 5px #0ff); }
+.linktree-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: #0ff;
+  text-shadow: 0 0 8px #0ff;
+  letter-spacing: 2px;
+}
+.linktree-link:hover .linktree-text { color: #fff; text-shadow: 0 0 12px #fff; }
+
+@media (max-width: 768px) {
+  .linktree-container { margin-top: 30px; }
+  .linktree-link { padding: 10px 16px; gap: 10px; }
+  .linktree-icon { font-size: 18px; }
+  .linktree-text { font-size: 10px; letter-spacing: 1px; }
+}
+
+@media (max-width: 480px) {
+  .linktree-container { margin-top: 25px; }
+  .linktree-link { padding: 8px 14px; gap: 8px; }
+  .linktree-icon { font-size: 16px; }
+  .linktree-text { font-size: 9px; letter-spacing: 1px; }
+}
