@@ -1,47 +1,42 @@
 // /site/modules/effects/background.js
-// Scrolling code wall (downward) with dynamic line generation/removal,
-// plus optional ASCII stars and scattered error lines.
-//
-// Usage (e.g. in /site/page/home/home.js):
-//   window.Site.effects.background.init({
-//     enable_code_bg: true,
-//     code_scroll_speed: 22, // px/sec downward
-//     code_color: '#0f0',
-//     code_font_size: 11,
-//     code_line_height: 14,
-//     code_lines_extra: 15,  // ~how many lines to keep as offscreen buffers (top & bottom)
-//     enable_error_lines: true,
-//     enable_ascii_stars: true
-//   });
+// Visual background effects: scrolling code wall, ASCII "stars", and scattered error lines.
 
 window.Site = window.Site || {};
+
 (function () {
   // ───────────────────────────────────────────────────────────────
-  // CONFIG — override via background.setConfig(...) or init(opts)
+  // CONFIG
+  // Global defaults for this module.
+  // Override per page via:
+  //   Site.effects.background.init({...})
+  // or at runtime via:
+  //   Site.effects.background.setConfig({...})
   // ───────────────────────────────────────────────────────────────
   const cfg = {
-    // toggles
-    enable_code_bg: true,
-    enable_error_lines: true,
-    enable_ascii_stars: true,
+    // ── Toggles for features ─────────────────────────────────────
+    enable_code_bg: true,       // scrolling code column
+    enable_error_lines: true,   // scattered red error snippets
+    enable_ascii_stars: true,   // drifting ASCII symbols
 
-    // layer ids
+    // ── Layer IDs (DOM element ids) ──────────────────────────────
     code_id:   'codeBg',
     errors_id: 'errorLayer',
     stars_id:  'starLayer',
 
-    // z-indexes (keep under your content z-index:2; fade overlay is 10000)
-    z_index_code: 1,
+    // ── Layer z-indexes (keep below main content, above body) ────
+    // Your content might be z-index:2; fade overlay is 10000.
+    z_index_code:   1,
     z_index_errors: 1,
-    z_index_stars: 1,
+    z_index_stars:  1,
 
-    // CODE BG (scrolling)
-    code_font_size: 15,          // px
-    code_line_height: 15,        // px
-    code_opacity: 0.15,
-    code_lines_extra: 10,        // offscreen buffer lines (kept above AND below)
-    code_color: '#0f0',
-    code_scroll_speed: 22,       // px per second (downward). 0 = no scroll
+    // ── Scrolling code background values ─────────────────────────
+    code_font_size:   15,   // px
+    code_line_height: 15,   // px
+    code_opacity:     0.15,
+    code_lines_extra: 10,   // offscreen buffer lines above AND below
+    code_color:       '#0f0',
+    code_scroll_speed: 22,  // px/sec downward; 0 = no scroll
+
     code_templates: [
       'function initPortfolio() { // A.R.I. is AliVe - watching from the shadows of compiled memory',
       '  const projects = [ProjectPsyLens, RingABell, LostSummer]; // Beware R.B.C-0',
@@ -75,14 +70,25 @@ window.Site = window.Site || {};
       'function checkReality() { if (A.R.I.isAlive()) return "Beware R.B.C-0"; } // entities collide'
     ],
 
-    // ASCII STARS
-    stars_count: 80,
-    star_symbols: ['(', ')', '{', '}', '[', ']', '<', '>', '/', '\\', '|', ';', ':', '.', ',', '=', '+', '-', '*', '&', '%', '$', '#', '@', '!', '?', '"', "'", '`'],
-    star_font_min: 8,
-    star_font_max: 18,
-    star_anim_delay_max: 3,      // seconds
+    // ── ASCII stars values ───────────────────────────────────────
+    stars_count: 80,  // how many star symbols to spawn
+    star_font_min:      8,
+    star_font_max:      18,
+    star_anim_delay_max: 3, // seconds (CSS twinkle delay)
+    
+    star_symbols: [
+      '(', ')', '{', '}', '[', ']', '<', '>', '/',
+      '\\', '|', ';', ':', '.', ',', '=', '+', '-',
+      '*', '&', '%', '$', '#', '@', '!', '?', '"', "'", '`'
+    ],
 
-    // ERROR LINES
+    // ── Error lines values ───────────────────────────────────────
+    errors_font_min:   8,
+    errors_font_max:   12,
+    errors_opacity_min: 0.3,
+    errors_opacity_max: 0.6,
+    errors_count:      18,  // how many error snippets to spawn
+    
     errors_messages: [
       "SyntaxError: Unexpected token '{'",
       "TypeError: Cannot read property 'length'",
@@ -104,12 +110,7 @@ window.Site = window.Site || {};
       'ReferenceError: process is not defined',
       "TypeError: Cannot destructure property 'name'",
       'Error: await is only valid in async functions'
-    ],
-    errors_font_min: 8,
-    errors_font_max: 12,
-    errors_opacity_min: 0.3,
-    errors_opacity_max: 0.6,
-    errors_count: 18 // how many to scatter (will sample from messages)
+    ]
   };
 
   // ───────────────────────────────────────────────────────────────
@@ -141,15 +142,15 @@ window.Site = window.Site || {};
   }
 
   // ───────────────────────────────────────────────────────────────
-  // CODE BACKGROUND — infinite downward stream
+  // Scrolling code background
   // ───────────────────────────────────────────────────────────────
   let codeInner = null;
   let lineQueue = [];          // array<HTMLElement>, top -> bottom
   let translateY = 0;          // px (applied to codeInner)
   let viewLines = 0;
   let totalLines = 0;
-  let topBuffer = 0;           // lines kept above viewport
-  let bottomBuffer = 0;        // lines kept below viewport
+  let topBuffer = 0;
+  let bottomBuffer = 0;
   let lastTs = 0;
   let scrollRAF = 0;
   let isVisible = true;
@@ -167,13 +168,11 @@ window.Site = window.Site || {};
   }
 
   function buildInitialLines() {
-    // compute counts
-    viewLines = Math.ceil(window.innerHeight / cfg.code_line_height);
-    topBuffer = Math.max(0, cfg.code_lines_extra | 0);
+    viewLines    = Math.ceil(window.innerHeight / cfg.code_line_height);
+    topBuffer    = Math.max(0, cfg.code_lines_extra | 0);
     bottomBuffer = Math.max(0, cfg.code_lines_extra | 0);
-    totalLines = viewLines + topBuffer + bottomBuffer;
+    totalLines   = viewLines + topBuffer + bottomBuffer;
 
-    // build queue
     lineQueue.length = 0;
     const frag = document.createDocumentFragment();
     for (let i = 0; i < totalLines; i++) {
@@ -184,7 +183,6 @@ window.Site = window.Site || {};
     codeInner.innerHTML = '';
     codeInner.appendChild(frag);
 
-    // start with topBuffer lines "above" the viewport
     translateY = -(topBuffer * cfg.code_line_height);
     applyTransform();
   }
@@ -209,7 +207,6 @@ window.Site = window.Site || {};
       }
     );
 
-    // inner scroller column
     codeInner = document.createElement('div');
     codeInner.style.position = 'absolute';
     codeInner.style.left = '0';
@@ -230,37 +227,34 @@ window.Site = window.Site || {};
 
     const speed = Math.max(0, Number(cfg.code_scroll_speed) || 0);
     if (speed === 0) {
-      codeInner && (codeInner.style.transform = 'translateY(0px)');
+      if (codeInner) codeInner.style.transform = 'translateY(0px)';
       return;
     }
 
     const step = (ts) => {
-      if (!isVisible) { scrollRAF = requestAnimationFrame(step); return; }
+      if (!isVisible) {
+        scrollRAF = requestAnimationFrame(step);
+        return;
+      }
 
       if (!lastTs) lastTs = ts;
-      const dt = (ts - lastTs) / 1000; // sec
+      const dt = (ts - lastTs) / 1000;
       lastTs = ts;
 
       translateY += speed * dt;
 
-      // Whenever we’ve moved by >= one line height, we:
-      // - prepend a fresh line at the top
-      // - subtract one lineHeight from translateY
-      // - remove one line from the bottom (keep length stable)
       const lh = cfg.code_line_height;
       while (translateY >= -0.0001 && translateY >= 0) {
-        // prepend
         const newEl = makeLineEl(genLineText());
         codeInner.insertBefore(newEl, codeInner.firstChild);
         lineQueue.unshift(newEl);
 
-        // keep queue size bounded (drop from bottom)
         if (lineQueue.length > totalLines) {
           const old = lineQueue.pop();
           if (old && old.parentNode) old.parentNode.removeChild(old);
         }
 
-        translateY -= lh; // consume one line worth of travel
+        translateY -= lh;
       }
 
       applyTransform();
@@ -288,7 +282,7 @@ window.Site = window.Site || {};
   }
 
   // ───────────────────────────────────────────────────────────────
-  // ASCII STARS — subtle drifting motion
+  // ASCII stars - subtle drifting motion
   // ───────────────────────────────────────────────────────────────
   let starAnimRAF = 0;
 
@@ -309,7 +303,7 @@ window.Site = window.Site || {};
     const startTime = performance.now();
 
     const step = (ts) => {
-      const t = (ts - startTime) / 1000; // seconds
+      const t = (ts - startTime) / 1000;
 
       for (const s of stars) {
         const ampX   = parseFloat(s.dataset.ampX)   || 0;
@@ -318,11 +312,9 @@ window.Site = window.Site || {};
         const speedY = parseFloat(s.dataset.speedY) || 0;
         const phase  = parseFloat(s.dataset.phase)  || 0;
 
-        // tiny local wiggle around the base position (in px)
         const dx = Math.sin(t * speedX + phase) * ampX;
         const dy = Math.cos(t * speedY + phase) * ampY;
 
-        // IMPORTANT: only transform, never change left/top here
         s.style.transform = `translate(${dx}px, ${dy}px)`;
       }
 
@@ -333,35 +325,33 @@ window.Site = window.Site || {};
   }
 
   function buildStars() {
-    stopStarAnim(); // reset any previous animation
+    stopStarAnim();
 
     const layer = ensureLayer(cfg.stars_id, cfg.z_index_stars, '');
     layer.innerHTML = '';
 
     for (let i = 0; i < cfg.stars_count; i++) {
       const s = document.createElement('div');
-      s.className = 'star'; // relies on your existing @keyframes twinkle
+      s.className = 'star';
       s.textContent = cfg.star_symbols[randint(0, cfg.star_symbols.length - 1)];
       s.style.position = 'absolute';
 
-      // fixed anchor in % of viewport
       const baseX = rand(0, 100);
       const baseY = rand(0, 100);
       s.style.left = baseX + '%';
       s.style.top  = baseY + '%';
 
-      // small local movement in px
-      s.dataset.ampX   = rand(2, 6).toFixed(2);   // horizontal wiggle
-      s.dataset.ampY   = rand(2, 6).toFixed(2);   // vertical wiggle
+      s.dataset.ampX   = rand(2, 6).toFixed(2);
+      s.dataset.ampY   = rand(2, 6).toFixed(2);
       s.dataset.speedX = rand(0.2, 0.6).toFixed(2);
       s.dataset.speedY = rand(0.2, 0.6).toFixed(2);
       s.dataset.phase  = rand(0, Math.PI * 2).toFixed(4);
 
-      s.style.fontSize = rand(cfg.star_font_min, cfg.star_font_max) + 'px';
+      s.style.fontSize       = rand(cfg.star_font_min, cfg.star_font_max) + 'px';
       s.style.animationDelay = rand(0, cfg.star_anim_delay_max) + 's';
-      s.style.color = '#fff';
-      s.style.opacity = '0.8';
-      s.style.pointerEvents = 'none';
+      s.style.color          = '#fff';
+      s.style.opacity        = '0.8';
+      s.style.pointerEvents  = 'none';
 
       layer.appendChild(s);
     }
@@ -370,12 +360,13 @@ window.Site = window.Site || {};
   }
 
   // ───────────────────────────────────────────────────────────────
-  // ERROR LINES
+  // Error lines
   // ───────────────────────────────────────────────────────────────
   function buildErrors() {
     const layer = ensureLayer(cfg.errors_id, cfg.z_index_errors, '');
     layer.innerHTML = '';
     const msgs = cfg.errors_messages.slice();
+
     for (let i = 0; i < cfg.errors_count; i++) {
       const msg = msgs[i % msgs.length];
       const el = document.createElement('div');
@@ -385,9 +376,9 @@ window.Site = window.Site || {};
       el.style.left = rand(5, 95) + '%';
       el.style.top  = rand(5, 95) + '%';
       el.style.fontFamily = 'Courier New, monospace';
-      el.style.fontSize = rand(cfg.errors_font_min, cfg.errors_font_max) + 'px';
-      el.style.color = '#f33';
-      el.style.opacity = rand(cfg.errors_opacity_min, cfg.errors_opacity_max).toFixed(2);
+      el.style.fontSize   = rand(cfg.errors_font_min, cfg.errors_font_max) + 'px';
+      el.style.color      = '#f33';
+      el.style.opacity    = rand(cfg.errors_opacity_min, cfg.errors_opacity_max).toFixed(2);
       el.style.pointerEvents = 'none';
       layer.appendChild(el);
     }
@@ -411,8 +402,10 @@ window.Site = window.Site || {};
       window.addEventListener('resize', () => {
         cancelAnimationFrame(resizeRaf);
         resizeRaf = requestAnimationFrame(() => {
-          // Rebuild all layers on resize to keep measurements correct
-          if (cfg.enable_code_bg) { stopCodeScroll(); buildCodeBg(); }
+          if (cfg.enable_code_bg) {
+            stopCodeScroll();
+            buildCodeBg();
+          }
           if (cfg.enable_ascii_stars) buildStars();
           if (cfg.enable_error_lines) buildErrors();
         });
@@ -428,34 +421,36 @@ window.Site = window.Site || {};
     removeLayer(cfg.stars_id);
   }
 
+  // Config setter with "master switch" protection
   function setConfig(partial = {}) {
-    // Create a shallow copy so we can safely tweak it
     const next = { ...partial };
 
-    // MASTER SWITCH: code background
-    // If cfg.enable_code_bg is already false, ignore any attempt to turn it back on.
-    if ('enable_code_bg' in next && cfg.enable_code_bg === false && next.enable_code_bg === true) {
+    // Code background: once forced off via cfg.enable_code_bg = false,
+    // ignore attempts to re-enable via setConfig/init.
+    if ('enable_code_bg' in next &&
+        cfg.enable_code_bg === false &&
+        next.enable_code_bg === true) {
       delete next.enable_code_bg;
     }
 
-    // MASTER SWITCH: ASCII stars
-    // If cfg.enable_ascii_stars is already false, ignore any attempt to turn it back on.
-    if ('enable_ascii_stars' in next && cfg.enable_ascii_stars === false && next.enable_ascii_stars === true) {
+    // ASCII stars
+    if ('enable_ascii_stars' in next &&
+        cfg.enable_ascii_stars === false &&
+        next.enable_ascii_stars === true) {
       delete next.enable_ascii_stars;
     }
 
-    // MASTER SWITCH: error lines
-    // If cfg.enable_error_lines is already false, ignore any attempt to turn it back on.
-    if ('enable_error_lines' in next && cfg.enable_error_lines === false && next.enable_error_lines === true) {
+    // Error lines
+    if ('enable_error_lines' in next &&
+        cfg.enable_error_lines === false &&
+        next.enable_error_lines === true) {
       delete next.enable_error_lines;
     }
 
     Object.assign(cfg, next);
   }
 
-
-
-  function rebuild(parts = { code:true, stars:true, errors:true }) {
+  function rebuild(parts = { code: true, stars: true, errors: true }) {
     if (parts.code) {
       if (cfg.enable_code_bg) {
         stopCodeScroll();
@@ -484,7 +479,13 @@ window.Site = window.Site || {};
     }
   }
 
+  // Helper: make a per-page config object from current defaults
+  function createConfig(overrides = {}) {
+    return { ...cfg, ...overrides };
+  }
+
   window.Site.effects = Object.assign(window.Site.effects || {}, {
-    background: { init, destroy, rebuild, setConfig, config: cfg }
+    background: { init, destroy, rebuild, setConfig, createConfig, config: cfg }
   });
 })();
+

@@ -1,46 +1,24 @@
 // ───────────────────────────────────────────────────────────────
-// BACKGROUND CONFIG FOR THIS PAGE
-// This is your "background" box: control everything from here.
-// All keys are optional overrides for /modules/effects/background.js
+// Background controller
+// Per-page overrides for /site/modules/effects/background.js
+// We start from the module defaults and override only what we need.
 // ───────────────────────────────────────────────────────────────
-const SOCIAL_BG_CONFIG = {
-  // --- Feature toggles ---
-  enable_code_bg: true,    // scrolling code wall
-  enable_ascii_stars: true, // drifting ascii symbols
-  enable_error_lines: false,// scattered error lines
+const bg = window.Site?.effects?.background;
 
-  // --- CODE BG (scrolling) ---
-  // If you ever turn enable_code_bg: true, these apply:
-  code_font_size: 15,       // px
-  code_line_height: 15,     // px
-  code_opacity: 0.15,
-  code_lines_extra: 10,     // offscreen buffer lines above/below
-  code_color: '#0f0',
-  code_scroll_speed: 22,    // px/sec downward (0 = no movement)
+const SOCIAL_BG_CONFIG = bg
+  ? bg.createConfig({
+      // ── Toggles for features ─────────────────────────────────
+      enable_code_bg:     true,   // scrolling code wall
+      enable_ascii_stars: true,   // drifting ASCII symbols
+      enable_error_lines: false,  // no red error lines on this page
 
-  // You could also override code_templates here if you want a
-  // different "script" for this page:
-  // code_templates: [
-  //   'console.log("Hello from SOCIAL page");',
-  //   ...
-  // ],
+      // You can override anything else here if you want:
+      // code_scroll_speed: 16,
+      // stars_count: 60,
+      // code_color: '#0ff',
+    })
+  : {};
 
-  // --- ASCII STARS ---
-  stars_count: 80,          // how many symbols to spawn
-  star_symbols: ['(', ')', '{', '}', '[', ']', '<', '>', '/', '\\', '|', ';', ':', '.', ',', '=', '+', '-', '*', '&', '%', '$', '#', '@', '!', '?', '"', "'", '`'],
-  star_font_min: 8,
-  star_font_max: 18,
-  star_anim_delay_max: 3,   // seconds (for twinkle CSS animation)
-
-  // --- ERROR LINES ---
-  // Only used if enable_error_lines: true
-  errors_count: 18,
-  errors_font_min: 8,
-  errors_font_max: 12,
-  errors_opacity_min: 0.3,
-  errors_opacity_max: 0.6,
-  // errors_messages: [ ... ] // you can override the whole list if you want
-};
 
 // ───────────────────────────────────────────────────────────────
 // AUDIO + PAGE FX
