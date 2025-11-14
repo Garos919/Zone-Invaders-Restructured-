@@ -9,6 +9,12 @@
   <title>Nicholas Garos - Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="social.css">
+
+  <!-- Global background effects module -->
+  <!-- Adjust the path if needed based on your actual folder structure -->
+  <script src="../../modules/effects/background.js" defer></script>
+
+  <!-- Page logic -->
   <script type="module" src="social.js" defer></script>
 </head>
 <body>
@@ -25,9 +31,9 @@
   
   <!-- Fade overlay for transitions -->
   <div id="fadeOverlay"></div>
-  
-  <div class="code-bg" id="codeBg"></div>
-  
+
+  <!-- NO more local code background div here; global background.js will create layers as needed -->
+
   <div class="content">
     <h1>CONNECT</h1>
     <div class="subtitle">Follow the digital trail...</div>
@@ -87,6 +93,5 @@
     </a>
   </div>
 
-  
 </body>
 </html>

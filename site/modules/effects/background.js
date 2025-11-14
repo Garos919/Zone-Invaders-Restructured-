@@ -43,21 +43,36 @@ window.Site = window.Site || {};
     code_color: '#0f0',
     code_scroll_speed: 22,       // px per second (downward). 0 = no scroll
     code_templates: [
-      'const socialMedia = { platforms: ["Instagram", "YouTube", "TikTok", "X"] };',
-      'function connectWithCreator() { return "Follow for updates!"; }',
-      'class SocialNetwork { constructor(handle) { this.followers = "growing"; } }',
-      'const devLife = { coding: true, creating: true, sharing: true };',
-      'async function loadContent() { return await fetch("/api/latest-posts"); }',
-      'const creator = { name: "Nicholas Garos", passion: "development" };',
-      '// Building connections one follower at a time',
-      'export default { instagram: "@1mb_memory", youtube: "@1MB_Memory" };',
-      'const engagement = followers.map(f => f.interact());',
-      'if (interested) { clickFollow(); } else { keepBrowsing(); }',
-      'function shareContent() { return "Spread the digital word!"; }',
-      'const community = users.filter(u => u.isAwesome === true);',
-      '// Social media: where code meets creativity',
-      'const platforms = ["📷", "📺", "🎵", "🐦"].map(icon => icon);',
-      'function buildFollowing() { return consistency + quality; }'
+      'function initPortfolio() { // A.R.I. is AliVe - watching from the shadows of compiled memory',
+      '  const projects = [ProjectPsyLens, RingABell, LostSummer]; // Beware R.B.C-0',
+      '  // TODO: Add projects here - Hey user long time no see, did you miss the cascading errors?',
+      'class Developer { // Project:Psy-Lens - a window into forgotten realities and abandoned code',
+      '  constructor(name) { this.secrets = "encrypted"; } // Where did Joseph go? Last seen in commit 404',
+      '    this.name = name; this.observer = "Adam"; // Adam watches through every keystroke',
+      '    this.skills = ["JavaScript", "Python", "Secrets"]; // Poor Eva, trapped in infinite loops',
+      'const portfolio = { status: "under construction", reality: false }; // Ring-A-Bell if you remember',
+      '  status: "under construction", echo: "Lost-Summer memories fade like deprecated functions"',
+      '  progress: 0.42, truthSeeker: true, // do you wanna know the truth? It\'s in the stack trace',
+      'async function loadData() { throw new Error("This-place-isnt-real"); } // Wake up, developer',
+      '  try { await fetch("/reality.json"); } catch(err) { console.log("your secret is safe with M..."); }',
+      '    const response = await fetch("/api/truth"); // What-are-you-looking-for.exe is not available',
+      'for (let i = 0; i < projects.length; i++) { if (i === infinity) break; } // P.eT.er knows the way out',
+      'if (ready === true) { deploy(); } else { console.warn("A.R.I. prevents deployment"); }',
+      '  deploy(); // But can you trust the build? R.B.C-0 modified the source without permission',
+      '} else { // Keep building... while Adam watches your every move from the debugger console',
+      '  // Keep building... the lies, the façade, the portfolio that doesn\'t exist outside /dev/null',
+      'export default Portfolio; // Hey user long time no see - your last commit was 3 years ago',
+      'import React from "react"; import { Truth } from "Project:Psy-Lens"; // See what others cannot',
+      'const skills = ["JavaScript", "Python", "Reality.break()"]; // Where did Joseph go? Check logs',
+      '// BUG: Fix this later - or let it consume everything like it consumed Eva, poor Eva...',
+      'return { name: "Nicholas Garos", isReal: false, watchedBy: "Adam" }; // Ring-A-Bell',
+      '  name: "Nicholas Garos", summer: "Lost-Summer - fragments of warmth in cold binary void"',
+      '  // More coming soon... if you survive long enough to see it, if This-place-isnt-real fails',
+      'console.error("What-are-you-looking-for.exe is not available"); // It never was, user',
+      'if (confirm("do you wanna know the truth?")) { window.location = "/rabbit-hole"; }',
+      '// This-place-isnt-real.js - Your portfolio is a simulation running in someone else\'s dream',
+      'const whisper = "your secret is safe with M..."; // But M knows, M always knows everything',
+      'function checkReality() { if (A.R.I.isAlive()) return "Beware R.B.C-0"; } // entities collide'
     ],
 
     // ASCII STARS
@@ -127,12 +142,6 @@ window.Site = window.Site || {};
 
   // ───────────────────────────────────────────────────────────────
   // CODE BACKGROUND — infinite downward stream
-  // We keep a queue of <div> lines. We start with:
-  // totalLines = viewLines + 2 * code_lines_extra
-  // Initial translateY = -(topBuffer * lineHeight).
-  // As we scroll downward, when translateY crosses 0, we prepend a new line
-  // (appearing from the top) and subtract one lineHeight. We also remove a line
-  // from the bottom to keep totalLines constant. No gaps, minimal DOM churn.
   // ───────────────────────────────────────────────────────────────
   let codeInner = null;
   let lineQueue = [];          // array<HTMLElement>, top -> bottom
@@ -279,25 +288,85 @@ window.Site = window.Site || {};
   }
 
   // ───────────────────────────────────────────────────────────────
-  // ASCII STARS
+  // ASCII STARS — subtle drifting motion
   // ───────────────────────────────────────────────────────────────
+  let starAnimRAF = 0;
+
+  function stopStarAnim() {
+    if (starAnimRAF) {
+      cancelAnimationFrame(starAnimRAF);
+      starAnimRAF = 0;
+    }
+  }
+
+  function startStarAnim() {
+    stopStarAnim();
+
+    const layer = $id(cfg.stars_id);
+    if (!layer) return;
+
+    const stars = Array.from(layer.children);
+    const startTime = performance.now();
+
+    const step = (ts) => {
+      const t = (ts - startTime) / 1000; // seconds
+
+      for (const s of stars) {
+        const ampX   = parseFloat(s.dataset.ampX)   || 0;
+        const ampY   = parseFloat(s.dataset.ampY)   || 0;
+        const speedX = parseFloat(s.dataset.speedX) || 0;
+        const speedY = parseFloat(s.dataset.speedY) || 0;
+        const phase  = parseFloat(s.dataset.phase)  || 0;
+
+        // tiny local wiggle around the base position (in px)
+        const dx = Math.sin(t * speedX + phase) * ampX;
+        const dy = Math.cos(t * speedY + phase) * ampY;
+
+        // IMPORTANT: only transform, never change left/top here
+        s.style.transform = `translate(${dx}px, ${dy}px)`;
+      }
+
+      starAnimRAF = requestAnimationFrame(step);
+    };
+
+    starAnimRAF = requestAnimationFrame(step);
+  }
+
   function buildStars() {
+    stopStarAnim(); // reset any previous animation
+
     const layer = ensureLayer(cfg.stars_id, cfg.z_index_stars, '');
     layer.innerHTML = '';
+
     for (let i = 0; i < cfg.stars_count; i++) {
       const s = document.createElement('div');
       s.className = 'star'; // relies on your existing @keyframes twinkle
       s.textContent = cfg.star_symbols[randint(0, cfg.star_symbols.length - 1)];
       s.style.position = 'absolute';
-      s.style.left = rand(0, 100) + '%';
-      s.style.top  = rand(0, 100) + '%';
+
+      // fixed anchor in % of viewport
+      const baseX = rand(0, 100);
+      const baseY = rand(0, 100);
+      s.style.left = baseX + '%';
+      s.style.top  = baseY + '%';
+
+      // small local movement in px
+      s.dataset.ampX   = rand(2, 6).toFixed(2);   // horizontal wiggle
+      s.dataset.ampY   = rand(2, 6).toFixed(2);   // vertical wiggle
+      s.dataset.speedX = rand(0.2, 0.6).toFixed(2);
+      s.dataset.speedY = rand(0.2, 0.6).toFixed(2);
+      s.dataset.phase  = rand(0, Math.PI * 2).toFixed(4);
+
       s.style.fontSize = rand(cfg.star_font_min, cfg.star_font_max) + 'px';
       s.style.animationDelay = rand(0, cfg.star_anim_delay_max) + 's';
       s.style.color = '#fff';
       s.style.opacity = '0.8';
       s.style.pointerEvents = 'none';
+
       layer.appendChild(s);
     }
+
+    startStarAnim();
   }
 
   // ───────────────────────────────────────────────────────────────
@@ -353,21 +422,66 @@ window.Site = window.Site || {};
 
   function destroy() {
     stopCodeScroll();
+    stopStarAnim();
     removeLayer(cfg.code_id);
     removeLayer(cfg.errors_id);
     removeLayer(cfg.stars_id);
   }
 
   function setConfig(partial = {}) {
-    Object.assign(cfg, partial);
+    // Create a shallow copy so we can safely tweak it
+    const next = { ...partial };
+
+    // MASTER SWITCH: code background
+    // If cfg.enable_code_bg is already false, ignore any attempt to turn it back on.
+    if ('enable_code_bg' in next && cfg.enable_code_bg === false && next.enable_code_bg === true) {
+      delete next.enable_code_bg;
+    }
+
+    // MASTER SWITCH: ASCII stars
+    // If cfg.enable_ascii_stars is already false, ignore any attempt to turn it back on.
+    if ('enable_ascii_stars' in next && cfg.enable_ascii_stars === false && next.enable_ascii_stars === true) {
+      delete next.enable_ascii_stars;
+    }
+
+    // MASTER SWITCH: error lines
+    // If cfg.enable_error_lines is already false, ignore any attempt to turn it back on.
+    if ('enable_error_lines' in next && cfg.enable_error_lines === false && next.enable_error_lines === true) {
+      delete next.enable_error_lines;
+    }
+
+    Object.assign(cfg, next);
   }
+
+
 
   function rebuild(parts = { code:true, stars:true, errors:true }) {
     if (parts.code) {
-      cfg.enable_code_bg ? (stopCodeScroll(), buildCodeBg()) : (stopCodeScroll(), removeLayer(cfg.code_id));
+      if (cfg.enable_code_bg) {
+        stopCodeScroll();
+        buildCodeBg();
+      } else {
+        stopCodeScroll();
+        removeLayer(cfg.code_id);
+      }
     }
-    if (parts.stars)  cfg.enable_ascii_stars ? buildStars()  : removeLayer(cfg.stars_id);
-    if (parts.errors) cfg.enable_error_lines ? buildErrors() : removeLayer(cfg.errors_id);
+
+    if (parts.stars) {
+      if (cfg.enable_ascii_stars) {
+        buildStars();
+      } else {
+        stopStarAnim();
+        removeLayer(cfg.stars_id);
+      }
+    }
+
+    if (parts.errors) {
+      if (cfg.enable_error_lines) {
+        buildErrors();
+      } else {
+        removeLayer(cfg.errors_id);
+      }
+    }
   }
 
   window.Site.effects = Object.assign(window.Site.effects || {}, {
